@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
+from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import LabelEncoder
@@ -43,8 +44,8 @@ def geneticAlgorithm(X, y):
     toolbox.register("select", tools.selTournament, tournsize=3)
 
     # initialize parameters
-    n_population = 50
-    n_generation = 10
+    n_population = 10
+    n_generation = 2
     pop = toolbox.population(n=n_population)
     hof = tools.HallOfFame(n_population * n_generation)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -59,6 +60,20 @@ def geneticAlgorithm(X, y):
 
     # return hall of fame
     return hof
+
+
+def bestIndividual(hof, X, y):
+    """
+    """
+    maxAccurcy = 0.0
+    for individual in tqdm(hof):
+        validationAccuracy = getFitness(individual, X, y)
+        if(validationAccuracy > maxAccurcy):
+            maxAccurcy = validationAccuracy
+            testAccuracy = individual.fitness.values
+            _individual = individual
+
+    return testAccuracy, maxAccurcy, _individual
 
 
 if __name__ == '__main__':
@@ -78,3 +93,10 @@ if __name__ == '__main__':
 
     # apply genetic algorithm
     hof = geneticAlgorithm(X, y)
+
+    # calculate the best individual
+    testAccuracy, validationAccuracy, individual = bestIndividual(hof, X, y)
+    print('Test Accuracy: \t\t' + str(testAccuracy))
+    print('Validation Accuracy: \t' + str(validationAccuracy))
+    print('Number of Features in Subset: \t' + str(individual.count(1)))
+    print('Individual: \t' + str(individual))
