@@ -6,8 +6,10 @@ from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import LabelEncoder
 from deap import creator, base, tools, algorithms
 
+
 def avg(l):
     return (sum(l)/float(len(l)))
+
 
 def getFitness(individual, X, y):
     # get index with value 0
@@ -22,6 +24,7 @@ def getFitness(individual, X, y):
 
     return (avg(cross_val_score(clf, X_subset, y, cv=5)),)
 
+
 def geneticAlgorithm(X, y):
     # create individual
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -31,9 +34,9 @@ def geneticAlgorithm(X, y):
     toolbox = base.Toolbox()
     toolbox.register("attr_bool", random.randint, 0, 1)
     toolbox.register("individual", tools.initRepeat,
-        creator.Individual, toolbox.attr_bool, len(X.columns))
+                     creator.Individual, toolbox.attr_bool, len(X.columns))
     toolbox.register("population", tools.initRepeat, list,
-        toolbox.individual)
+                     toolbox.individual)
     toolbox.register("evaluate", getFitness, X=X, y=y)
     toolbox.register("mate", tools.cxOnePoint)
     toolbox.register("mutate", tools.mutFlipBit, indpb=0.05)
@@ -51,11 +54,12 @@ def geneticAlgorithm(X, y):
 
     # genetic algorithm
     pop, log = algorithms.eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.2,
-        ngen=n_generation, stats=stats, halloffame=hof,
-        verbose=True)
+                                   ngen=n_generation, stats=stats, halloffame=hof,
+                                   verbose=True)
 
     # return hall of fame
     return hof
+
 
 if __name__ == '__main__':
 
@@ -64,13 +68,13 @@ if __name__ == '__main__':
 
     # encode labels column to numbers
     le = LabelEncoder()
-    le.fit(df.iloc[:,-1])
-    y = le.transform(df.iloc[:,-1])
-    X = df.iloc[:,:-1]
+    le.fit(df.iloc[:, -1])
+    y = le.transform(df.iloc[:, -1])
+    X = df.iloc[:, :-1]
 
     # get accuracy with all features
     individual = [1 for i in range(len(X.columns))]
     print("Accuracy with all features: \t" + str(getFitness(individual, X, y)) + "\n")
 
     # apply genetic algorithm
-    hof = geneticAlgorithm(X,y)
+    hof = geneticAlgorithm(X, y)
