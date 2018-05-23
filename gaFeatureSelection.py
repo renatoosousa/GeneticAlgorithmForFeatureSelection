@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import random
-from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import LabelEncoder
@@ -9,10 +8,14 @@ from deap import creator, base, tools, algorithms
 
 
 def avg(l):
+    '''
+    '''
     return (sum(l)/float(len(l)))
 
 
 def getFitness(individual, X, y):
+    '''
+    '''
     # get index with value 0
     cols = [index for index in range(len(individual)) if individual[index] == 0]
 
@@ -27,6 +30,8 @@ def getFitness(individual, X, y):
 
 
 def geneticAlgorithm(X, y):
+    '''
+    '''
     # create individual
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMax)
@@ -66,20 +71,21 @@ def bestIndividual(hof, X, y):
     """
     """
     maxAccurcy = 0.0
-    for individual in tqdm(hof):
-        validationAccuracy = getFitness(individual, X, y)
-        if(validationAccuracy > maxAccurcy):
-            maxAccurcy = validationAccuracy
-            testAccuracy = individual.fitness.values
+    for individual in hof:
+        if(individual.fitness.values > maxAccurcy):
+            maxAccurcy = individual.fitness.values
             _individual = individual
 
-    return testAccuracy, maxAccurcy, _individual
+    _individualHeader = [list(X)[i] for i in range(len(_individual)) if _individual[i] == 1]
+    return _individual.fitness.values, _individual, _individualHeader
 
 
 if __name__ == '__main__':
 
+    dataframePath = '/home/renato/Documents/base_mama/csv_result-4classesFrontais.csv'
+
     # read dataframe from csv
-    df = pd.read_csv('/home/renato/Documents/base_mama/csv_result-4classesFrontais.csv', sep=',')
+    df = pd.read_csv(dataframePath, sep=',')
 
     # encode labels column to numbers
     le = LabelEncoder()
@@ -94,9 +100,22 @@ if __name__ == '__main__':
     # apply genetic algorithm
     hof = geneticAlgorithm(X, y)
 
-    # calculate the best individual
-    testAccuracy, validationAccuracy, individual = bestIndividual(hof, X, y)
-    print('Test Accuracy: \t\t' + str(testAccuracy))
-    print('Validation Accuracy: \t' + str(validationAccuracy))
+    # select the best individual
+    accuracy, individual, header = bestIndividual(hof, X, y)
+    print('Best Accuracy: \t' + str(accuracy))
     print('Number of Features in Subset: \t' + str(individual.count(1)))
-    print('Individual: \t' + str(individual))
+    print('Individual: \t\t' + str(individual))
+    print('Feature Subset\t: ' + str(header))
+
+    print('\n\ncreating a new classifier with the result')
+
+    # read dataframe from csv one more time
+    df = pd.read_csv(dataframePath, sep=',')
+
+    # with feature subset
+    X = df[header]
+
+    clf = LogisticRegression()
+
+    scores = cross_val_score(clf, X, y, cv=5)
+    print("Accuracy with Feature Subset: \t" + str(avg(scores)) + "\n")
