@@ -8,14 +8,16 @@ from deap import creator, base, tools, algorithms
 
 
 def avg(l):
-    '''
-    '''
+    """
+    Returns the average between list elements
+    """
     return (sum(l)/float(len(l)))
 
 
 def getFitness(individual, X, y):
-    '''
-    '''
+    """
+    Feature subset fitness function
+    """
     # get index with value 0
     cols = [index for index in range(len(individual)) if individual[index] == 0]
 
@@ -30,8 +32,10 @@ def getFitness(individual, X, y):
 
 
 def geneticAlgorithm(X, y):
-    '''
-    '''
+    """
+    Deap global variables
+    Initialize variables to use eaSimple
+    """
     # create individual
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMax)
@@ -69,6 +73,7 @@ def geneticAlgorithm(X, y):
 
 def bestIndividual(hof, X, y):
     """
+    Get the best individual
     """
     maxAccurcy = 0.0
     for individual in hof:
