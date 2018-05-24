@@ -20,10 +20,11 @@ def getFitness(individual, X, y):
     Feature subset fitness function
     """
 
-    if(individual.count(0)!=len(individual)):
+    if(individual.count(0) != len(individual)):
         # get index with value 0
-        cols = [index for index in range(len(individual)) if individual[index] == 0]
-        
+        cols = [index for index in range(
+            len(individual)) if individual[index] == 0]
+
         # get features subset
         X_parsed = X.drop(X.columns[cols], axis=1)
         X_subset = pd.get_dummies(X_parsed)
@@ -34,6 +35,7 @@ def getFitness(individual, X, y):
         return (avg(cross_val_score(clf, X_subset, y, cv=5)),)
     else:
         return(0,)
+
 
 def geneticAlgorithm(X, y):
     """
@@ -85,7 +87,8 @@ def bestIndividual(hof, X, y):
             maxAccurcy = individual.fitness.values
             _individual = individual
 
-    _individualHeader = [list(X)[i] for i in range(len(_individual)) if _individual[i] == 1]
+    _individualHeader = [list(X)[i] for i in range(
+        len(_individual)) if _individual[i] == 1]
     return _individual.fitness.values, _individual, _individualHeader
 
 
@@ -103,7 +106,8 @@ if __name__ == '__main__':
 
     # get accuracy with all features
     individual = [1 for i in range(len(X.columns))]
-    print("Accuracy with all features: \t" + str(getFitness(individual, X, y)) + "\n")
+    print("Accuracy with all features: \t" +
+          str(getFitness(individual, X, y)) + "\n")
 
     # apply genetic algorithm
     hof = geneticAlgorithm(X, y)
