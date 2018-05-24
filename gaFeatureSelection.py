@@ -37,7 +37,7 @@ def getFitness(individual, X, y):
         return(0,)
 
 
-def geneticAlgorithm(X, y):
+def geneticAlgorithm(X, y, n_population, n_generation):
     """
     Deap global variables
     Initialize variables to use eaSimple
@@ -59,8 +59,6 @@ def geneticAlgorithm(X, y):
     toolbox.register("select", tools.selTournament, tournsize=3)
 
     # initialize parameters
-    n_population = 10
-    n_generation = 2
     pop = toolbox.population(n=n_population)
     hof = tools.HallOfFame(n_population * n_generation)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -92,9 +90,24 @@ def bestIndividual(hof, X, y):
     return _individual.fitness.values, _individual, _individualHeader
 
 
+def getArguments():
+    """
+    Get argumments from command-line
+    If pass only dataframe path, pop and gen will be default
+    """
+    dfPath = sys.argv[1]
+    if(len(sys.argv) == 4):
+        pop = int(sys.argv[2])
+        gen = int(sys.argv[3])
+    else:
+        pop = 10
+        gen = 2
+    return dfPath, pop, gen
+
+
 if __name__ == '__main__':
-    # get dataframe path from command-line argument
-    dataframePath = sys.argv[1]
+    # get dataframe path, population number and generation number from command-line argument
+    dataframePath, n_pop, n_gen = getArguments()
     # read dataframe from csv
     df = pd.read_csv(dataframePath, sep=',')
 
@@ -110,7 +123,7 @@ if __name__ == '__main__':
           str(getFitness(individual, X, y)) + "\n")
 
     # apply genetic algorithm
-    hof = geneticAlgorithm(X, y)
+    hof = geneticAlgorithm(X, y, n_pop, n_gen)
 
     # select the best individual
     accuracy, individual, header = bestIndividual(hof, X, y)
