@@ -19,18 +19,21 @@ def getFitness(individual, X, y):
     """
     Feature subset fitness function
     """
-    # get index with value 0
-    cols = [index for index in range(len(individual)) if individual[index] == 0]
 
-    # get features subset
-    X_parsed = X.drop(X.columns[cols], axis=1)
-    X_subset = pd.get_dummies(X_parsed)
+    if(individual.count(0)!=len(individual)):
+        # get index with value 0
+        cols = [index for index in range(len(individual)) if individual[index] == 0]
+        
+        # get features subset
+        X_parsed = X.drop(X.columns[cols], axis=1)
+        X_subset = pd.get_dummies(X_parsed)
 
-    # apply classification algorithm
-    clf = LogisticRegression()
+        # apply classification algorithm
+        clf = LogisticRegression()
 
-    return (avg(cross_val_score(clf, X_subset, y, cv=5)),)
-
+        return (avg(cross_val_score(clf, X_subset, y, cv=5)),)
+    else:
+        return(0,)
 
 def geneticAlgorithm(X, y):
     """
