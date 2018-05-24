@@ -5,6 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import LabelEncoder
 from deap import creator, base, tools, algorithms
+import sys
 
 
 def avg(l):
@@ -86,9 +87,8 @@ def bestIndividual(hof, X, y):
 
 
 if __name__ == '__main__':
-
-    dataframePath = '/home/renato/Documents/base_mama/csv_result-4classesFrontais.csv'
-
+    # get dataframe path from command-line argument
+    dataframePath = sys.argv[1]
     # read dataframe from csv
     df = pd.read_csv(dataframePath, sep=',')
 
