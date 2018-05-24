@@ -37,7 +37,28 @@ Obs:
 ```
 python gaFeatureSelection.py datasets/nuclear.csv 20 6
 ```
+Returns:
+```
+Accuracy with all features: 	(0.90833333333333344,)
 
+gen	nevals	avg     	min     	max     
+0  	20    	0.849167	0.683333	0.941667
+1  	12    	0.919167	0.766667	0.966667
+2  	18    	0.934167	0.908333	0.966667
+3  	9     	0.941667	0.908333	0.966667
+4  	9     	0.946667	0.908333	0.966667
+5  	12    	0.955833	0.908333	0.966667
+6  	12    	0.9625  	0.883333	0.966667
+Best Accuracy: 	(0.96666666666666679,)
+Number of Features in Subset: 	5
+Individual: 		[1, 1, 1, 0, 0, 1, 1, 0, 0, 0]
+Feature Subset	: ['cost', 'date', 't1', 'pr', 'ne']
+
+
+creating a new classifier with the result
+Accuracy with Feature Subset: 	0.966666666667
+
+```
 ## Fonts
 1. This repository was heavily based on [GeneticAlgorithmFeatureSelection](https://github.com/scoliann/GeneticAlgorithmFeatureSelection)
 1. For the description was used part of the introduction of  [Genetic algorithms for feature selection in Data Analytics](https://www.neuraldesigner.com/blog/genetic_algorithms_for_feature_selection). Great text.
